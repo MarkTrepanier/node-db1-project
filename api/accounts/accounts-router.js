@@ -19,14 +19,35 @@ router.get("/:id", checkAccountId, async (req, res, next) => {
 });
 
 //eslint-disable-next-line
-router.post("/", (req, res, next) => {
-  // DO YOUR MAGIC
-});
+router.post(
+  "/",
+  checkAccountPayload,
+  checkAccountNameUnique,
+  async (req, res, next) => {
+    try {
+      req.body.name = req.body.name.trim();
+      const newAccount = await Account.create(req.body);
+      res.status(201).json(newAccount);
+    } catch (er) {
+      next(er);
+    }
+  }
+);
 
 //eslint-disable-next-line
-router.put("/:id", (req, res, next) => {
-  // DO YOUR MAGIC
-});
+router.put(
+  "/:id",
+  checkAccountId,
+  checkAccountPayload,
+  async (req, res, next) => {
+    try {
+      const changes = await Account.updateById(req.params.id, req.body);
+      res.status(200).json(changes);
+    } catch (er) {
+      next(er);
+    }
+  }
+);
 
 //eslint-disable-next-line
 router.delete("/:id", (req, res, next) => {
@@ -36,7 +57,7 @@ router.delete("/:id", (req, res, next) => {
 //eslint-disable-next-line
 router.use((err, req, res, next) => {
   console.log(err.message);
-  res.status(err.status || 500).json({ message: "account not found" });
+  res.status(err.status || 500).json(err);
 });
 
 module.exports = router;
