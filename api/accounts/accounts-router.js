@@ -50,8 +50,10 @@ router.put(
 );
 
 //eslint-disable-next-line
-router.delete("/:id", (req, res, next) => {
-  // DO YOUR MAGIC
+router.delete("/:id", checkAccountId, (req, res, next) => {
+  Account.deleteById(req.params.id).then(() => {
+    res.status(200).json({ message: "you did it!" });
+  });
 });
 
 //eslint-disable-next-line
